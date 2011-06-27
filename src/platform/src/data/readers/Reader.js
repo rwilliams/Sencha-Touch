@@ -240,7 +240,8 @@ Ext.data.Reader = Ext.extend(Object, {
      * @return {Ext.data.ResultSet} A ResultSet object
      */
     readRecords: function(data) {
-        /**
+        
+/**
          * The raw data object that was last passed to readRecords. Stored for further processing if needed
          * @property rawData
          * @type Mixed
@@ -249,11 +250,14 @@ Ext.data.Reader = Ext.extend(Object, {
 
         data = this.getData(data);
 
-        var root    = this.getRoot(data),
-            total   = root.length,
+        var root    = Ext.isArray(data) ? data : this.getRoot(data),
             success = true,
-            value, records, recordCount;
+            total,value, records, recordCount;
 
+        if (root) {
+            total = root.length;
+        }
+        
         if (this.totalProperty) {
             value = parseInt(this.getTotal(data), 10);
             if (!isNaN(value)) {
@@ -268,8 +272,13 @@ Ext.data.Reader = Ext.extend(Object, {
             }
         }
 
-        records = this.extractData(root, true);
-        recordCount = records.length;
+        if (root) {
+            records = this.extractData(root,true);
+            recordCount = records.length;
+        } else {
+            recordCount = 0;
+            records = [];
+        }
 
         return new Ext.data.ResultSet({
             total  : total || recordCount,
