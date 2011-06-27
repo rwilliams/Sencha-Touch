@@ -13,23 +13,39 @@ Ext.data.JsonWriter = Ext.extend(Ext.data.Writer, {
 {'records': [{name: 'my record'}, {name: 'another record'}]}
 </code></pre>
      */
-    root: 'records',
+    root: undefined,
+
+	allowSingle: true,
     
-    /**
-     * @cfg {Boolean} encode True to use Ext.encode() on the data before sending. Defaults to <tt>false</tt>.
+    
+/**
+     * @cfg {Boolean} encode True to use Ext.encode() on the data before sending. Defaults to false.
      */
     encode: false,
     
     //inherit docs
     writeRecords: function(request, data) {
-        if (this.encode === true) {
+        var root = this.root;
+		
+		if (this.allowSingle && data.length == 1) {
+            // convert to single object format
+            data = data[0];
+        }
+		
+		if (this.encode === true) {
             data = Ext.encode(data);
         }
         
         request.jsonData = request.jsonData || {};
-        request.jsonData[this.root] = data;
         
+		if (root){
+			request.jsonData[this.root] = data;
+		} else {
+			request.jsonData = data;
+		}
+				
         return request;
+
     }
 });
 
