@@ -357,7 +357,15 @@ Ext.data.Model = Ext.extend(Ext.util.Stateful, {
             if (operation.wasSuccessful()) {
                 //we need to make sure we've set the updated data here. Ideally this will be redundant once the
                 //ModelCache is in place
-                me.set(record.data);
+                  //hack for couchDB 
+                
+				if (record !== undefined){
+                	me.set(record.data);	
+                } else {
+                	record = operation.records[0];
+                	response = Ext.util.JSON.decode(operation.response.responseText);
+                	record.set('_rev',response.rev);	
+                }
                 record.unsetDirty();
 
                 if (typeof successFn == 'function') {
