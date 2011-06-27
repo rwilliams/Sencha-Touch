@@ -152,7 +152,7 @@ Ext.data.RestProxy = Ext.extend(Ext.data.AjaxProxy, {
         var records = request.operation.records || [],
             record  = records[0],
             format  = this.format,
-            url     = request.url || this.url;
+            url     = request.url || this.api[request.action] || this.url;
         
         if (this.appendId && record) {
             if (!url.match(/\/$/)) {
